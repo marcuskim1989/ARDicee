@@ -10,7 +10,7 @@ import SceneKit
 import ARKit
 
 class ViewController: UIViewController, ARSCNViewDelegate {
-
+    
     @IBOutlet var sceneView: ARSCNView!
     
     override func viewDidLoad() {
@@ -22,57 +22,49 @@ class ViewController: UIViewController, ARSCNViewDelegate {
         // Set the view's delegate
         sceneView.delegate = self
         
-       // let plane = SCNPlane(width: 1, height: 1.5)
+        // let plane = SCNPlane(width: 1, height: 1.5)
         
-       // let sphere = SCNSphere(radius: 0.2)
-                
-      //  let cube = SCNBox(width: 0.1, height: 0.1, length: 0.1, chamferRadius: 0.01)
+        // let sphere = SCNSphere(radius: 0.2)
         
-      // let material = SCNMaterial()
+        //  let cube = SCNBox(width: 0.1, height: 0.1, length: 0.1, chamferRadius: 0.01)
         
-     //   material.diffuse.contents = UIImage(named: "art.scnassets/mom_selfie.jpeg")
-//
-     //   plane.materials = [material]
-//
-     //   let node = SCNNode()
-//
-     //   node.position = SCNVector3(0, 0.1, -1)
-//
-      //  node.geometry = plane
+        // let material = SCNMaterial()
         
-       //sceneView.scene.rootNode.addChildNode(node)
+        //   material.diffuse.contents = UIImage(named: "art.scnassets/mom_selfie.jpeg")
+        //
+        //   plane.materials = [material]
+        //
+        //   let node = SCNNode()
+        //
+        //   node.position = SCNVector3(0, 0.1, -1)
+        //
+        //  node.geometry = plane
+        
+        //sceneView.scene.rootNode.addChildNode(node)
         
         sceneView.autoenablesDefaultLighting = true
         
         // Create a new scene
-//        let diceScene = SCNScene(named: "art.scnassets/diceCollada.scn")!
-////
-//
-//        if let diceNode = diceScene.rootNode.childNode(withName: "Dice", recursively: true) {
-//
-//        diceNode.position = SCNVector3(0, 0, -0.1)
-//
-//        sceneView.scene.rootNode.addChildNode(diceNode)
-//        }
+        //
         
-//        // Set the scene to the view
-//        sceneView.scene = scene
+        //        // Set the scene to the view
+        //        sceneView.scene = scene
     }
     
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
         
         if ARWorldTrackingConfiguration.isSupported {
-        
-        // Create a session configuration
-        let configuration = ARWorldTrackingConfiguration()
+            
+            // Create a session configuration
+            let configuration = ARWorldTrackingConfiguration()
             
             configuration.planeDetection = .horizontal
-
-        
-        
-        // Run the view's session
-        sceneView.session.run(configuration)
+            
+            
+            
+            // Run the view's session
+            sceneView.session.run(configuration)
         } else {
             print("Your device is not supported. Switching to alternative configuration")
         }
@@ -93,10 +85,20 @@ class ViewController: UIViewController, ARSCNViewDelegate {
             
             let results = sceneView.raycastQuery(from: touchLocation, allowing: .estimatedPlane, alignment: .horizontal)
             
-            if results != nil {
-                print("touched the plane")
-            } else {
-                print("touched somewhere else")
+            if let hitResult = results {
+                
+                let diceScene = SCNScene(named: "art.scnassets/diceCollada.scn")!
+                
+                if let diceNode = diceScene.rootNode.childNode(withName: "Dice", recursively: true) {
+                    
+                    diceNode.position = SCNVector3(
+                        x: hitResult.direction.x,
+                        y: hitResult.direction.y + diceNode.boundingSphere.radius,
+                        z: hitResult.direction.z
+                    )
+                    
+                    sceneView.scene.rootNode.addChildNode(diceNode)
+                }
             }
             
             
@@ -129,5 +131,5 @@ class ViewController: UIViewController, ARSCNViewDelegate {
             return
         }
     }
-
+    
 }
