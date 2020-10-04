@@ -16,6 +16,7 @@ class ViewController: UIViewController, ARSCNViewDelegate {
     override func viewDidLoad() {
         super.viewDidLoad()
         
+        
         self.sceneView.debugOptions = [ARSCNDebugOptions.showFeaturePoints]
         
         // Set the view's delegate
@@ -83,6 +84,23 @@ class ViewController: UIViewController, ARSCNViewDelegate {
         
         // Pause the view's session
         sceneView.session.pause()
+    }
+    
+    override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
+        if let touch = touches.first {
+            
+            let touchLocation = touch.location(in: sceneView)
+            
+            let results = sceneView.raycastQuery(from: touchLocation, allowing: .estimatedPlane, alignment: .horizontal)
+            
+            if results != nil {
+                print("touched the plane")
+            } else {
+                print("touched somewhere else")
+            }
+            
+            
+        }
     }
     
     func renderer(_ renderer: SCNSceneRenderer, didAdd node: SCNNode, for anchor: ARAnchor) {
